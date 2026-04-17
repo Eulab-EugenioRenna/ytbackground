@@ -1,0 +1,13 @@
+{
+  "name": "ytbackground-audio-server",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Minimal HTTP wrapper around yt-dlp for audio responses",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "skills": {
+    "ios-application-dev": {
+      "source": "minimax-ai/skills",
+      "sourceType": "github",
+      "computedHash": "62e475d290a760e8a24085a35381258e7595297da16157ac8bc11aea340c2d9a"
+    },
+    "mobile-ios-design": {
+      "source": "wshobson/agents",
+      "sourceType": "github",
+      "computedHash": "3902f919488d8ddc983e157bbcd5f16b739b84eeaab57002bf52b7f9601ed6ad"
+    }
+  }
+}

@@ -1,0 +1,12 @@
+services:
+  ytbackground-audio-server:
+    build:
+      context: ./server
+    container_name: ytbackground-audio-server
+    ports:
+      - "3000:3000"
+    environment:
+      HOST: 0.0.0.0
+      PORT: 3000
+      TEMP_ROOT: /tmp/ytbackground-audio
+    restart: unless-stopped
