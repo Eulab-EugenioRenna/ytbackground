@@ -2,7 +2,7 @@ import SwiftData
 import SwiftUI
 
 private func playbackURL(for item: VideoItem) -> URL? {
-    item.audioStreamURL ?? Configuration.audioStreamURL(for: item.id)
+    Configuration.resolvedAudioStreamURL(for: item.id, fallback: item.audioStreamURL)
 }
 
 struct SearchView: View {

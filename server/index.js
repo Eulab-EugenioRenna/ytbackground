@@ -12,6 +12,14 @@ const MAX_BODY_SIZE = Number(process.env.MAX_BODY_SIZE || 32 * 1024);
 
 fs.mkdirSync(TEMP_ROOT, { recursive: true });
 
+function log(message, details = {}) {
+  const payload = Object.entries(details)
+    .filter(([, value]) => value !== undefined && value !== null && value !== '')
+    .map(([key, value]) => `${key}=${JSON.stringify(value)}`)
+    .join(' ');
+  process.stdout.write(`[ytbackground] ${message}${payload ? ` ${payload}` : ''}\n`);
+}
+
 function sendJson(response, statusCode, payload) {
   const body = JSON.stringify(payload);
   response.writeHead(statusCode, {
@@ -98,6 +106,49 @@ function getFileExtensionFromName(fileName) {
   return ext;
 }
 
+function parseRangeHeader(rangeHeader, fileSize) {
+  if (typeof rangeHeader !== 'string') {
+    return null;
+  }
+
+  const match = /^bytes=(\d*)-(\d*)$/.exec(rangeHeader.trim());
+  if (!match) {
+    return 'invalid';
+  }
+
+  const [, startValue, endValue] = match;
+  if (!startValue && !endValue) {
+    return 'invalid';
+  }
+
+  let start;
+  let end;
+
+  if (!startValue) {
+    const suffixLength = Number(endValue);
+    if (!Number.isInteger(suffixLength) || suffixLength <= 0) {
+      return 'invalid';
+    }
+
+    start = Math.max(fileSize - suffixLength, 0);
+    end = fileSize - 1;
+  } else {
+    start = Number(startValue);
+    end = endValue ? Number(endValue) : fileSize - 1;
+
+    if (!Number.isInteger(start) || !Number.isInteger(end) || start < 0 || start > end) {
+      return 'invalid';
+    }
+  }
+
+  if (start >= fileSize) {
+    return 'invalid';
+  }
+
+  end = Math.min(end, fileSize - 1);
+  return { start, end };
+}
+
 function fetchMetadata(videoUrl) {
   return new Promise((resolve, reject) => {
     const child = spawnYtDlp(['--dump-single-json', '--no-playlist', videoUrl]);
@@ -147,13 +198,23 @@ function streamAudio(response, videoUrl, suggestedName) {
 
     let stderr = '';
     let headersSent = false;
+    const requestId = response.req?.requestId;
 
     child.stderr.on('data', (chunk) => {
       stderr += chunk;
+      log('yt-dlp stream stderr', {
+        requestId,
+        line: String(chunk).trim()
+      });
     });
 
     child.stdout.once('data', (firstChunk) => {
       headersSent = true;
+      log('stream response started', {
+        requestId,
+        bytes: firstChunk.length,
+        fileName: `${suggestedName}.mp3`
+      });
       response.writeHead(200, {
         'Content-Type': 'audio/mpeg',
         'Content-Disposition': `inline; filename="${suggestedName}.mp3"`,
@@ -175,6 +236,12 @@ function streamAudio(response, videoUrl, suggestedName) {
         response.end();
       }
 
+      log('stream response completed', {
+        requestId,
+        exitCode: code,
+        headersSent
+      });
+
       resolve();
     });
 
@@ -188,6 +255,7 @@ function streamAudio(response, videoUrl, suggestedName) {
 
 async function downloadAudioFile(response, videoUrl, suggestedName) {
   const jobId = randomUUID();
+  const requestId = response.req?.requestId;
   const outputTemplate = path.join(TEMP_ROOT, `${jobId}.%(ext)s`);
   let downloadedFile;
   const args = [
@@ -210,6 +278,11 @@ async function downloadAudioFile(response, videoUrl, suggestedName) {
 
     child.stderr.on('data', (chunk) => {
       stderr += chunk;
+      log('yt-dlp file stderr', {
+        requestId,
+        jobId,
+        line: String(chunk).trim()
+      });
     });
 
     child.on('error', reject);
@@ -235,23 +308,61 @@ async function downloadAudioFile(response, videoUrl, suggestedName) {
   const ext = getFileExtensionFromName(downloadedFile);
   const finalName = `${suggestedName}${ext}`;
   const stat = fs.statSync(downloadedFile);
+  const requestedRange = parseRangeHeader(response.req?.headers.range, stat.size);
 
-  response.writeHead(200, {
+  if (requestedRange === 'invalid') {
+    response.writeHead(416, {
+      'Content-Range': `bytes */${stat.size}`,
+      'Accept-Ranges': 'bytes'
+    });
+    response.end();
+    return;
+  }
+
+  const start = requestedRange?.start ?? 0;
+  const end = requestedRange?.end ?? (stat.size - 1);
+  const isPartial = requestedRange != null;
+
+  log('file response ready', {
+    requestId,
+    jobId,
+    path: downloadedFile,
+    size: stat.size,
+    range: response.req?.headers.range,
+    start,
+    end,
+    partial: isPartial
+  });
+
+  response.writeHead(isPartial ? 206 : 200, {
     'Content-Type': 'audio/mpeg',
-    'Content-Length': stat.size,
-    'Content-Disposition': `attachment; filename="${finalName}"`
+    'Content-Length': end - start + 1,
+    'Content-Disposition': `inline; filename="${finalName}"`,
+    'Accept-Ranges': 'bytes',
+    ...(isPartial ? { 'Content-Range': `bytes ${start}-${end}/${stat.size}` } : {})
   });
 
   try {
     await new Promise((resolve, reject) => {
-      const readStream = fs.createReadStream(downloadedFile);
+      const readStream = fs.createReadStream(downloadedFile, { start, end });
       readStream.on('error', reject);
       readStream.on('close', resolve);
       readStream.pipe(response);
     });
+    log('file response completed', {
+      requestId,
+      jobId,
+      bytes: end - start + 1,
+      partial: isPartial
+    });
   } finally {
     if (downloadedFile && fs.existsSync(downloadedFile)) {
       fs.unlinkSync(downloadedFile);
+      log('temporary file deleted', {
+        requestId,
+        jobId,
+        path: downloadedFile
+      });
     }
   }
 }
@@ -285,10 +396,25 @@ async function handleAudioRequest(request, response, asAttachment) {
   }
 
   const videoUrl = buildVideoUrl(videoId);
+  log('audio request accepted', {
+    requestId: request.requestId,
+    method: request.method,
+    path: getRequestURL(request).pathname,
+    videoId,
+    asAttachment,
+    range: request.headers.range,
+    userAgent: request.headers['user-agent']
+  });
 
   try {
     const metadata = await fetchMetadata(videoUrl);
     const suggestedName = sanitizeFileName(metadata.title || videoId);
+    log('metadata resolved', {
+      requestId: request.requestId,
+      title: metadata.title,
+      duration: metadata.duration,
+      suggestedName
+    });
 
     if (asAttachment) {
       await downloadAudioFile(response, videoUrl, suggestedName);
@@ -297,6 +423,10 @@ async function handleAudioRequest(request, response, asAttachment) {
 
     await streamAudio(response, videoUrl, suggestedName);
   } catch (error) {
+    log('audio request failed', {
+      requestId: request.requestId,
+      message: error.message
+    });
     if (!response.headersSent) {
       sendJson(response, 502, { error: error.message });
     } else if (!response.writableEnded) {
@@ -306,10 +436,28 @@ async function handleAudioRequest(request, response, asAttachment) {
 }
 
 const server = http.createServer(async (request, response) => {
+  request.requestId = randomUUID();
   const requestURL = getRequestURL(request);
 
+  log('request received', {
+    requestId: request.requestId,
+    method: request.method,
+    path: requestURL.pathname,
+    search: requestURL.search,
+    range: request.headers.range,
+    userAgent: request.headers['user-agent']
+  });
+
+  response.on('finish', () => {
+    log('response finished', {
+      requestId: request.requestId,
+      statusCode: response.statusCode,
+      path: requestURL.pathname
+    });
+  });
+
   if (request.method === 'GET' && requestURL.pathname === '/health') {
-    sendJson(response, 200, { ok: true });
+      sendJson(response, 200, { ok: true });
     return;
   }
 

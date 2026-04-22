@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -49,7 +49,7 @@
 		874A20FD327BADABF4EF0681 /* YouTubePlayerWebView+Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75E35EAB71F17FD34A532E46 /* YouTubePlayerWebView+Event.swift */; };
 		8D0A98AB03DB68A06BD45021 /* PlaylistPickerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F3E2268FA508E11411A58F1 /* PlaylistPickerSheet.swift */; };
 		8E30C2AD54628103C283A8AE /* YouTubePlayer+CaptionsLanguageCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4AE283892285C968C6BA57C /* YouTubePlayer+CaptionsLanguageCode.swift */; };
-		91882C82CB0A87A5BF282A06 /* ytbackgroundActivity.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B8A0544BFE5BA5474557823B /* ytbackgroundActivity.appex */; };
+		91882C82CB0A87A5BF282A06 /* ytbackgroundActivity.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B8A0544BFE5BA5474557823B /* ytbackgroundActivity.appex */; };
 		939097366AF39C6EFB5D9D15 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C080012C87E8D0195157842 /* Models.swift */; };
 		9665C6B1F4DD3BF1B4B57E52 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BE7027FEAB05BC3A930B300 /* AppDelegate.swift */; };
 		9B97994B2053CE7144F7F5A8 /* YouTubePlayer+VideoThumbnailAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE57DC227CBA91399EBBCCA5 /* YouTubePlayer+VideoThumbnailAPI.swift */; };
@@ -78,7 +78,7 @@
 		CE77E67EF2FE4B272EC604FF /* YouTubePlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAB0A173D7E6EBE26D45DB82 /* YouTubePlayer.swift */; };
 		D1C1323A64F9FCCC29BBD895 /* PlaybackActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD8713937E82FFC9B4F09D34 /* PlaybackActivityAttributes.swift */; };
 		D35172305505C42B6B697A98 /* YouTubePlayer+Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C81A50FB125CC79A1D3ABEA /* YouTubePlayer+Event.swift */; };
-		D59D4A4AF5FE72D973DA40BE /* ytbackgroundShare.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = E7190D56DA233BBBC7470C3B /* ytbackgroundShare.appex */; };
+		D59D4A4AF5FE72D973DA40BE /* ytbackgroundShare.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = E7190D56DA233BBBC7470C3B /* ytbackgroundShare.appex */; };
 		D759DE8716D5807AA869BDB6 /* PlaylistsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EED81219D44FEAA7E59A1CE1 /* PlaylistsView.swift */; };
 		D7FA4507E27655739754D7D0 /* YouTubePlayer+Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A330B7B4BE5C1D0B3D05573 /* YouTubePlayer+Error.swift */; };
 		D8228DE5B5156FE156B19676 /* YouTubePlayer+PlaybackQuality.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E5CEFE5161A6689558B10AD /* YouTubePlayer+PlaybackQuality.swift */; };
@@ -114,16 +114,16 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		B0F17D5EAD390E3FC57DF4AC /* Embed App Extensions */ = {
+		B0F17D5EAD390E3FC57DF4AC /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				91882C82CB0A87A5BF282A06 /* ytbackgroundActivity.appex in Embed App Extensions */,
-				D59D4A4AF5FE72D973DA40BE /* ytbackgroundShare.appex in Embed App Extensions */,
+				91882C82CB0A87A5BF282A06 /* ytbackgroundActivity.appex in Embed Foundation Extensions */,
+				D59D4A4AF5FE72D973DA40BE /* ytbackgroundShare.appex in Embed Foundation Extensions */,
 			);
-			name = "Embed App Extensions";
+			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -187,6 +187,8 @@
 		B8A0544BFE5BA5474557823B /* ytbackgroundActivity.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ytbackgroundActivity.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE180E8F608509ECC4A17E3C /* YouTubePlayer+QueueingAPI.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "YouTubePlayer+QueueingAPI.swift"; path = ".tmp-youtubeplayerkit/Sources/API/YouTubePlayer+QueueingAPI.swift"; sourceTree = "<group>"; };
 		C404DC8C574BE0F88FADBB38 /* YouTubePlayer+APIError.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "YouTubePlayer+APIError.swift"; path = ".tmp-youtubeplayerkit/Sources/Models/Error/YouTubePlayer+APIError.swift"; sourceTree = "<group>"; };
+		C6FB0C0D2F92546D006331EC /* ytbackgroundRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ytbackgroundRelease.entitlements; sourceTree = "<group>"; };
+		C6FB0C0E2F92547C006331EC /* ytbackgroundShareRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ytbackgroundShareRelease.entitlements; sourceTree = "<group>"; };
 		C8F9E2E22B8E86F4589A3F04 /* YouTubePlayer+PlaybackState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "YouTubePlayer+PlaybackState.swift"; path = ".tmp-youtubeplayerkit/Sources/Models/Playback/YouTubePlayer+PlaybackState.swift"; sourceTree = "<group>"; };
 		C95A1237DC7D9B0C97F3514C /* YouTubePlayerHostingView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = YouTubePlayerHostingView.swift; path = ".tmp-youtubeplayerkit/Sources/UI/HostingView/YouTubePlayerHostingView.swift"; sourceTree = "<group>"; };
 		CB7BE1EF6135E0B7C8AE9C62 /* YouTubePlayer+Module+Option.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "YouTubePlayer+Module+Option.swift"; path = ".tmp-youtubeplayerkit/Sources/Models/Module/YouTubePlayer+Module+Option.swift"; sourceTree = "<group>"; };
@@ -259,6 +261,8 @@
 		2C2CB326A1CBAA6A4CE993EF = {
 			isa = PBXGroup;
 			children = (
+				C6FB0C0E2F92547C006331EC /* ytbackgroundShareRelease.entitlements */,
+				C6FB0C0D2F92546D006331EC /* ytbackgroundRelease.entitlements */,
 				93C31B3F4FCA2E7FA79D55A7 /* Products */,
 				9812F72713A8DAB78A570066 /* Frameworks */,
 				13844A47F8871D1C4BA64181 /* Release.xcconfig */,
@@ -407,7 +411,7 @@
 				DB79EAB3348405714E697AE4 /* Sources */,
 				294917F8778508B49D6F5774 /* Frameworks */,
 				DE4D54640BAA3EDC0412FB0C /* Resources */,
-				B0F17D5EAD390E3FC57DF4AC /* Embed App Extensions */,
+				B0F17D5EAD390E3FC57DF4AC /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
@@ -426,8 +430,9 @@
 		DE72634E05D7AAF1835A6CD4 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 1600;
-				LastUpgradeCheck = 1600;
+				LastUpgradeCheck = 2640;
 			};
 			buildConfigurationList = ED6E1DD7289F8C6D8752FD2E /* Build configuration list for PBXProject "ytbackground" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -438,8 +443,6 @@
 				Base,
 			);
 			mainGroup = 2C2CB326A1CBAA6A4CE993EF;
-			minimizedProjectReferenceProxies = 0;
-			preferredProjectObjectVersion = 77;
 			productRefGroup = 93C31B3F4FCA2E7FA79D55A7 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -599,12 +602,17 @@
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_ENTITLEMENTS = ShareExtension/ytbackgroundShare.entitlements;
-				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
+				DEVELOPMENT_TEAM = A84WPR87FT;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = ShareExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER_PREFIX).ytbackground.share";
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = com.eulab.ytbackground.share;
 				PRODUCT_NAME = ytbackgroundShare;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
@@ -617,13 +625,20 @@
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_ENTITLEMENTS = Widget/ytbackgroundWidget.entitlements;
-				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Widget/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER_PREFIX).ytbackground.activity";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "--PRODUCT-BUNDLE-IDENTIFIER-PREFIX-.ytbackground.activity";
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = com.eulab.ytbackground.activity;
 				PRODUCT_NAME = ytbackgroundActivity;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
 				VALIDATE_PRODUCT = YES;
@@ -637,15 +652,19 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_OBJC_WEAK = NO;
-				CODE_SIGN_ENTITLEMENTS = App/ytbackground.entitlements;
-				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
+				CODE_SIGN_ENTITLEMENTS = ytbackgroundRelease.entitlements;
+				DEVELOPMENT_TEAM = A84WPR87FT;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = App/Info.plist;
 				INFOPLIST_KEY_APP_GROUP_IDENTIFIER = "$(APP_GROUP_IDENTIFIER)";
 				INFOPLIST_KEY_YOUTUBE_DATA_API_KEY = "$(YOUTUBE_DATA_API_KEY)";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER_PREFIX).ytbackground";
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = com.eulab.ytbackground;
 				PRODUCT_NAME = ytbackground;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
@@ -688,9 +707,12 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -709,6 +731,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -749,9 +772,12 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -763,6 +789,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
@@ -775,12 +802,17 @@
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_ENTITLEMENTS = Widget/ytbackgroundWidget.entitlements;
-				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
+				DEVELOPMENT_TEAM = A84WPR87FT;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Widget/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER_PREFIX).ytbackground.activity";
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = com.eulab.ytbackground.activity;
 				PRODUCT_NAME = ytbackgroundActivity;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
@@ -795,14 +827,18 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_ENTITLEMENTS = App/ytbackground.entitlements;
-				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
+				DEVELOPMENT_TEAM = A84WPR87FT;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = App/Info.plist;
 				INFOPLIST_KEY_APP_GROUP_IDENTIFIER = "$(APP_GROUP_IDENTIFIER)";
 				INFOPLIST_KEY_YOUTUBE_DATA_API_KEY = "$(YOUTUBE_DATA_API_KEY)";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER_PREFIX).ytbackground";
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = com.eulab.ytbackground;
 				PRODUCT_NAME = ytbackground;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
@@ -815,13 +851,18 @@
 			baseConfigurationReference = 9CE5240E03017FCC995D4352 /* Release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_OBJC_WEAK = NO;
-				CODE_SIGN_ENTITLEMENTS = ShareExtension/ytbackgroundShare.entitlements;
-				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
+				CODE_SIGN_ENTITLEMENTS = ytbackgroundShareRelease.entitlements;
+				DEVELOPMENT_TEAM = A84WPR87FT;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = ShareExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER_PREFIX).ytbackground.share";
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = com.eulab.ytbackground.share;
 				PRODUCT_NAME = ytbackgroundShare;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
