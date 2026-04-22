@@ -16,6 +16,8 @@
 		15277BFCD394C035E1F0EA61 /* YouTubePlayer+Information.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B2405FA64EF0357327010CA /* YouTubePlayer+Information.swift */; };
 		160910B30DDBD4C620691D3F /* YouTubePlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1C463FFE819BAAB8F87EFC /* YouTubePlayerViewController.swift */; };
 		18D98912D8188A828264E087 /* PlaybackService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 172C67148263837C76319B64 /* PlaybackService.swift */; };
+		1B4D0A8E4C2F0B3A2E7F1001 /* AudioCacheStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B4D0A8E4C2F0B3A2E7F0001 /* AudioCacheStore.swift */; };
+		1B4D0A8E4C2F0B3A2E7F1002 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B4D0A8E4C2F0B3A2E7F0002 /* SettingsView.swift */; };
 		1FCDC4B6DF9D9BA369967BCB /* ytbackgroundWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 593730FBE1FAFEE4C2E02C64 /* ytbackgroundWidget.swift */; };
 		254748F62E9C39649F5E0709 /* YouTubePlayer+PlaybackAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C4E44D5199B171C6CE1F004 /* YouTubePlayer+PlaybackAPI.swift */; };
 		294E2D36704081F418B83B45 /* YouTubePlayer+CaptionsTranslationLanguage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2A94C80135D0AE1DE940E01 /* YouTubePlayer+CaptionsTranslationLanguage.swift */; };
@@ -136,6 +138,8 @@
 		13844A47F8871D1C4BA64181 /* Release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Config/Release.xcconfig; sourceTree = "<group>"; };
 		1507CE4585CCAE144D8386DE /* YouTubePlayer+Options.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "YouTubePlayer+Options.swift"; path = ".tmp-youtubeplayerkit/Sources/Models/YouTubePlayer+Options.swift"; sourceTree = "<group>"; };
 		172C67148263837C76319B64 /* PlaybackService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PlaybackService.swift; path = App/Services/PlaybackService.swift; sourceTree = "<group>"; };
+		1B4D0A8E4C2F0B3A2E7F0001 /* AudioCacheStore.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AudioCacheStore.swift; path = App/Services/AudioCacheStore.swift; sourceTree = "<group>"; };
+		1B4D0A8E4C2F0B3A2E7F0002 /* SettingsView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SettingsView.swift; path = App/Features/Settings/SettingsView.swift; sourceTree = "<group>"; };
 		1A3A6445C0C380FB8FA19620 /* YouTubePlayerView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = YouTubePlayerView.swift; path = ".tmp-youtubeplayerkit/Sources/UI/View/YouTubePlayerView.swift"; sourceTree = "<group>"; };
 		216FD05E24E218A713144DD7 /* YouTubePlayerWebView+Evaluate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "YouTubePlayerWebView+Evaluate.swift"; path = ".tmp-youtubeplayerkit/Sources/WebView/YouTubePlayerWebView+Evaluate.swift"; sourceTree = "<group>"; };
 		261C01482F42DBE4F69358DC /* YouTubePlayer+JavaScript.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "YouTubePlayer+JavaScript.swift"; path = ".tmp-youtubeplayerkit/Sources/Models/JavaScript/YouTubePlayer+JavaScript.swift"; sourceTree = "<group>"; };
@@ -284,12 +288,14 @@
 				5ECA99F27C376D2650B6B4F9 /* YouTubeURLParser.swift */,
 				50237A31FA35612B3D0E228E /* YouTubeAPIClient.swift */,
 				172C67148263837C76319B64 /* PlaybackService.swift */,
+				1B4D0A8E4C2F0B3A2E7F0001 /* AudioCacheStore.swift */,
 				EC644EA1549857D3FF112E38 /* PlaylistRepository.swift */,
 				2C9F1A5D2F85AFAA1865E92A /* SearchViewModel.swift */,
 				B1FAEE8E20A2F3E88A7FC6EF /* SearchView.swift */,
 				7D3CAD8B98540283D60B25FA /* PlayerView.swift */,
 				FEBDA38C9EE8EE7A2B7CAD23 /* YouTubeWebPlayerView.swift */,
 				EED81219D44FEAA7E59A1CE1 /* PlaylistsView.swift */,
+				1B4D0A8E4C2F0B3A2E7F0002 /* SettingsView.swift */,
 				5F2B307963834C2FAB3B0C12 /* YouTubePlayer+API.swift */,
 				06C62501FBC0756606F986DA /* YouTubePlayer+CaptionsAPI.swift */,
 				0B88E510D89B39A2927B4DA2 /* YouTubePlayer+ModuleAPI.swift */,
@@ -521,12 +527,14 @@
 				C5BCAE4C813EFD3FA8BB9296 /* YouTubeURLParser.swift in Sources */,
 				9E2805CA67A7746E222DE0E0 /* YouTubeAPIClient.swift in Sources */,
 				18D98912D8188A828264E087 /* PlaybackService.swift in Sources */,
+				1B4D0A8E4C2F0B3A2E7F1001 /* AudioCacheStore.swift in Sources */,
 				516EF8F0537954008F331D24 /* PlaylistRepository.swift in Sources */,
 				406D6F9702CAD9FDA894284D /* SearchViewModel.swift in Sources */,
 				5A1E4DBEDC22D5E2786EF1B8 /* SearchView.swift in Sources */,
 				2EA01B13A20B39359673BAF1 /* PlayerView.swift in Sources */,
 				A8CE6DDEC828DA0BA1128E99 /* YouTubeWebPlayerView.swift in Sources */,
 				D759DE8716D5807AA869BDB6 /* PlaylistsView.swift in Sources */,
+				1B4D0A8E4C2F0B3A2E7F1002 /* SettingsView.swift in Sources */,
 				C88456D517983ED1EE6E304B /* YouTubePlayer+API.swift in Sources */,
 				B17126F47234A5B6196E72B3 /* YouTubePlayer+CaptionsAPI.swift in Sources */,
 				140081D10D9FD213A90130CF /* YouTubePlayer+ModuleAPI.swift in Sources */,

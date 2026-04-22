@@ -14,6 +14,7 @@ import UIKit
 final class PlaybackService {
     static let shared = PlaybackService()
     @ObservationIgnored private let logger = Logger(subsystem: "com.eulab.ytbackground", category: "Playback")
+    @ObservationIgnored private let audioCache = AudioCacheStore.shared
 
     var currentItem: VideoItem?
     var queue: [VideoItem] = []
@@ -31,8 +32,10 @@ final class PlaybackService {
     @ObservationIgnored private var interruptionObserver: NSObjectProtocol?
     @ObservationIgnored private var routeChangeObserver: NSObjectProtocol?
     @ObservationIgnored private var artworkTask: Task<Void, Never>?
-    @ObservationIgnored private var localFallbackTask: Task<Void, Never>?
-    @ObservationIgnored private var localFallbackVideoID: String?
+    @ObservationIgnored private var localPlaybackTask: Task<Void, Never>?
+    @ObservationIgnored private var localPlaybackVideoID: String?
+    @ObservationIgnored private var currentArtworkURL: URL?
+    @ObservationIgnored private var currentArtwork: MPMediaItemArtwork?
     @ObservationIgnored private var liveActivity: Activity<PlaybackActivityAttributes>?
     @ObservationIgnored private var lastLiveActivityUpdateAt: Date = .distantPast
 
@@ -44,9 +47,9 @@ final class PlaybackService {
     }
 
     func play(item: VideoItem, queue: [VideoItem]? = nil) {
-        localFallbackTask?.cancel()
-        localFallbackTask = nil
-        localFallbackVideoID = nil
+        localPlaybackTask?.cancel()
+        localPlaybackTask = nil
+        localPlaybackVideoID = nil
 
         if let queue {
             self.queue = queue
@@ -60,10 +63,10 @@ final class PlaybackService {
         isPlaying = false
         isPlayerReady = false
         errorMessage = nil
+        player.replaceCurrentItem(with: nil)
 
         guard let streamURL = Configuration.resolvedAudioStreamURL(for: item.id, fallback: item.audioStreamURL) else {
             logger.error("Missing valid audio stream URL. baseURL=\(String(describing: Configuration.audioServerBaseURL), privacy: .public) videoID=\(item.id, privacy: .public) fallback=\(String(describing: item.audioStreamURL), privacy: .public)")
-            player.replaceCurrentItem(with: nil)
             playerDidFail(message: "Questo elemento non ha uno stream audio diretto disponibile.")
             updateNowPlayingInfo()
             refreshLiveActivity(force: true)
@@ -71,8 +74,42 @@ final class PlaybackService {
             return
         }
 
-        logger.info("Starting playback. baseURL=\(String(describing: Configuration.audioServerBaseURL), privacy: .public) streamURL=\(streamURL.absoluteString, privacy: .public) videoID=\(item.id, privacy: .public)")
-        startPlayback(url: streamURL)
+        localPlaybackVideoID = item.id
+        errorMessage = audioCache.cachedFileURL(for: item) == nil ? "Scarico audio in locale..." : nil
+        logger.info("Preparing local playback. baseURL=\(String(describing: Configuration.audioServerBaseURL), privacy: .public) streamURL=\(streamURL.absoluteString, privacy: .public) videoID=\(item.id, privacy: .public)")
+
+        localPlaybackTask = Task { [weak self] in
+            guard let self else { return }
+
+            do {
+                let localURL = try await self.audioCache.preparePlaybackURL(for: item)
+                guard !Task.isCancelled else { return }
+
+                await MainActor.run {
+                    guard self.currentItem?.id == item.id else { return }
+                    self.logger.info("Starting local playback. videoID=\(item.id, privacy: .public) localURL=\(localURL.path(percentEncoded: false), privacy: .public)")
+                    self.errorMessage = nil
+                    self.startPlayback(url: localURL)
+                    self.updateNowPlayingInfo()
+                    self.refreshLiveActivity(force: true)
+                    self.persistSnapshot()
+                }
+            } catch is CancellationError {
+                await MainActor.run {
+                    if self.localPlaybackVideoID == item.id {
+                        self.localPlaybackVideoID = nil
+                    }
+                }
+            } catch {
+                await MainActor.run {
+                    if self.localPlaybackVideoID == item.id {
+                        self.localPlaybackVideoID = nil
+                    }
+                    self.playerDidFail(message: error.localizedDescription)
+                }
+            }
+        }
+
         updateNowPlayingInfo()
         refreshLiveActivity(force: true)
         persistSnapshot()
@@ -202,11 +239,6 @@ final class PlaybackService {
                     }
                 case .failed:
                     self.logger.error("AVPlayerItem failed. error=\(item.error?.localizedDescription ?? "unknown", privacy: .public) url=\(((item.asset as? AVURLAsset)?.url.absoluteString ?? "n/a"), privacy: .public)")
-                    if let currentItem = self.currentItem,
-                       let failedURL = (item.asset as? AVURLAsset)?.url,
-                       self.startLocalFallbackIfNeeded(for: currentItem, failedURL: failedURL) {
-                        return
-                    }
                     self.playerDidFail(message: item.error?.localizedDescription ?? "Impossibile avviare la riproduzione audio.")
                 default:
                     self.isPlayerReady = false
@@ -343,12 +375,20 @@ final class PlaybackService {
             return
         }
 
+        let existingNowPlayingInfo = MPNowPlayingInfoCenter.default().nowPlayingInfo ?? [:]
         var nowPlayingInfo: [String: Any] = [
             MPMediaItemPropertyTitle: currentItem.title,
             MPMediaItemPropertyArtist: currentItem.channelTitle,
             MPNowPlayingInfoPropertyElapsedPlaybackTime: duration * progress,
             MPNowPlayingInfoPropertyPlaybackRate: isPlaying ? 1.0 : 0.0
         ]
+
+        if currentArtworkURL == currentItem.artworkURL,
+           let currentArtwork {
+            nowPlayingInfo[MPMediaItemPropertyArtwork] = currentArtwork
+        } else if let existingArtwork = existingNowPlayingInfo[MPMediaItemPropertyArtwork] {
+            nowPlayingInfo[MPMediaItemPropertyArtwork] = existingArtwork
+        }
 
         if duration > 0 {
             nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = duration
@@ -365,81 +405,16 @@ final class PlaybackService {
         player.play()
     }
 
-    private func startLocalFallbackIfNeeded(for item: VideoItem, failedURL: URL) -> Bool {
-        guard !failedURL.isFileURL else { return false }
-        guard localFallbackVideoID != item.id else { return true }
-        guard let remoteURL = Configuration.resolvedAudioStreamURL(for: item.id, fallback: item.audioStreamURL), !remoteURL.isFileURL else {
-            return false
-        }
-
-        localFallbackTask?.cancel()
-        localFallbackVideoID = item.id
-        errorMessage = "Riproduzione remota non riuscita, preparo il file locale..."
-        logger.warning("Starting local fallback download. videoID=\(item.id, privacy: .public) remoteURL=\(remoteURL.absoluteString, privacy: .public) failedURL=\(failedURL.absoluteString, privacy: .public)")
-
-        localFallbackTask = Task { [weak self] in
-            guard let self else { return }
-
-            do {
-                let localURL = try await self.downloadLocalFallbackAudio(for: item, from: remoteURL)
-                guard !Task.isCancelled else { return }
-
-                await MainActor.run {
-                    guard self.currentItem?.id == item.id else { return }
-                    self.logger.info("Retrying playback from local file. videoID=\(item.id, privacy: .public) localURL=\(localURL.path(percentEncoded: false), privacy: .public)")
-                    self.errorMessage = nil
-                    self.startPlayback(url: localURL)
-                    self.updateNowPlayingInfo()
-                    self.refreshLiveActivity(force: true)
-                    self.persistSnapshot()
-                }
-            } catch is CancellationError {
-                await MainActor.run {
-                    if self.localFallbackVideoID == item.id {
-                        self.localFallbackVideoID = nil
-                    }
-                }
-            } catch {
-                await MainActor.run {
-                    if self.localFallbackVideoID == item.id {
-                        self.localFallbackVideoID = nil
-                    }
-                    self.playerDidFail(message: error.localizedDescription)
-                }
-            }
-        }
-
-        return true
-    }
-
-    private func downloadLocalFallbackAudio(for item: VideoItem, from remoteURL: URL) async throws -> URL {
-        let (temporaryURL, response) = try await URLSession.shared.download(from: remoteURL)
-        guard let httpResponse = response as? HTTPURLResponse,
-              (200...299).contains(httpResponse.statusCode) else {
-            throw URLError(.badServerResponse)
-        }
-
-        let fileManager = FileManager.default
-        let cachesDirectory = try fileManager.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-        let fallbackDirectory = cachesDirectory.appendingPathComponent("PlaybackFallback", isDirectory: true)
-        try fileManager.createDirectory(at: fallbackDirectory, withIntermediateDirectories: true)
-
-        let suggestedFileName = httpResponse.suggestedFilename ?? remoteURL.lastPathComponent
-        let fileExtension = URL(fileURLWithPath: suggestedFileName).pathExtension.isEmpty ? "mp3" : URL(fileURLWithPath: suggestedFileName).pathExtension
-        let destinationURL = fallbackDirectory
-            .appendingPathComponent(item.id.replacingOccurrences(of: "/", with: "_"))
-            .appendingPathExtension(fileExtension)
-
-        if fileManager.fileExists(atPath: destinationURL.path(percentEncoded: false)) {
-            try fileManager.removeItem(at: destinationURL)
-        }
-
-        try fileManager.moveItem(at: temporaryURL, to: destinationURL)
-        logger.info("Downloaded local fallback file. videoID=\(item.id, privacy: .public) status=\(httpResponse.statusCode, privacy: .public) bytes=\(httpResponse.expectedContentLength, privacy: .public) path=\(destinationURL.path(percentEncoded: false), privacy: .public)")
-        return destinationURL
-    }
-
     private func loadArtworkIfNeeded(for item: VideoItem) {
+        if currentArtworkURL != item.artworkURL {
+            currentArtworkURL = nil
+            currentArtwork = nil
+        }
+
+        if currentArtworkURL == item.artworkURL, currentArtwork != nil {
+            return
+        }
+
         artworkTask?.cancel()
         guard let artworkURL = item.artworkURL else { return }
 
@@ -452,8 +427,11 @@ final class PlaybackService {
 
             await MainActor.run {
                 guard self.currentItem?.artworkURL == artworkURL else { return }
+                let artwork = MPMediaItemArtwork(boundsSize: image.size) { _ in image }
+                self.currentArtworkURL = artworkURL
+                self.currentArtwork = artwork
                 var nowPlayingInfo = MPNowPlayingInfoCenter.default().nowPlayingInfo ?? [:]
-                nowPlayingInfo[MPMediaItemPropertyArtwork] = MPMediaItemArtwork(boundsSize: image.size) { _ in image }
+                nowPlayingInfo[MPMediaItemPropertyArtwork] = artwork
                 MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
             }
         }

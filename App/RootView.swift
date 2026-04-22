@@ -6,6 +6,7 @@ struct RootView: View {
         case search
         case player
         case playlists
+        case settings
     }
 
     @Bindable private var playbackService = PlaybackService.shared
@@ -31,6 +32,12 @@ struct RootView: View {
                     .tag(Tab.playlists)
                     .tabItem {
                         Label("Playlists", systemImage: "music.note.list")
+                    }
+
+                SettingsView()
+                    .tag(Tab.settings)
+                    .tabItem {
+                        Label("Settings", systemImage: "gearshape")
                     }
             }
 
@@ -79,6 +86,7 @@ struct RootView: View {
             let repository = PlaylistRepository(context: modelContext)
             let items = (try? await apiClient.importPlaylist(from: url)) ?? []
             try? repository.importPlaylist(title: "Shared Playlist", items: items)
+            AudioCacheStore.shared.enqueuePlaylistDownload(items: items)
         }
     }
 }

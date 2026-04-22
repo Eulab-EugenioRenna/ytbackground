@@ -15,6 +15,7 @@ final class SearchViewModel {
         let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else {
             results = []
+            errorMessage = nil
             return
         }
 
@@ -28,6 +29,8 @@ final class SearchViewModel {
             } else {
                 errorMessage = nil
             }
+        } catch is CancellationError {
+            errorMessage = nil
         } catch {
             errorMessage = error.localizedDescription
         }

@@ -5,4 +5,7 @@ enum AppGroup {
         ?? "group.com.eugeniorenna.ytbackground"
 
     static let defaults = UserDefaults(suiteName: identifier) ?? .standard
+
+    static let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: identifier)
+        ?? FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
 }

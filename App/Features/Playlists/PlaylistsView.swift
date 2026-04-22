@@ -118,6 +118,7 @@ struct PlaylistsView: View {
             let items = try await apiClient.importPlaylist(from: url)
             let repository = PlaylistRepository(context: modelContext)
             try repository.importPlaylist(title: "Imported Playlist", items: items)
+            AudioCacheStore.shared.enqueuePlaylistDownload(items: items)
             importURL = ""
         } catch {
             importError = error.localizedDescription
@@ -159,6 +160,7 @@ private struct PlaylistDetailView: View {
             ToolbarItem(placement: .topBarTrailing) {
                 Button("Play All") {
                     let queue = sortedItems.map(\.videoItem)
+                    AudioCacheStore.shared.enqueuePlaylistDownload(items: queue)
                     PlaybackService.shared.replaceQueue(with: queue, autoplay: true)
                 }
             }
